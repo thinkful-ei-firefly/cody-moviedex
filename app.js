@@ -1,12 +1,14 @@
 // require(import) modules
 require('dotenv').config() // reads the .env file for API_TOKEN
 const express = require('express')
-const morgan = require('morgan')
 const helmet = require('helmet')
 const cors = require('cors')
 
 // get movies
 const moviesJson = require('./movies')
+
+// check if we are in production if true return tiny(less info) else 'common' more info
+const morgan = process.env.NODE_ENV === 'production' ? 'tiny' : 'common'
 
 // create express server
 const app = express()
@@ -27,32 +29,26 @@ app.use(function validateBearerToken(req, res, next) {
 })
 
 app.get('/movie', (req, res) => {
-  // console.log('req: ', req.query)
   const { genre, country, avg_vote } = req.query
 
   // deconstruct moviesJson to mutable movies list
   let movies = [...moviesJson]
 
   if (genre) {
-    // console.log('genre: ', genre)
     // ['animation','drama', 'romantic', 'comedy', 'spy', 'crime', 'thriller', 'adventure', 'documentary', 'horror']
     movies = movies.filter(movie => {
-      // console.log(movie.genre.toLowerCase() === genre.toLowerCase())
       return movie.genre.toLowerCase() === genre.toLowerCase()
     })
-    // console.log(movies)
     // res.status(200).send(movies)
     // return
   }
   if (country) {
-    console.log('country: ', country)
     movies = movies.filter(movie => {
       return movie.country.toLowerCase() === country.toLowerCase()
     })
     // return
   }
   if (avg_vote) {
-    console.log('avg_vote: ', avg_vote)
     movies = movies.filter(movie => {
       return parseFloat(movie.avg_vote) >= parseFloat(avg_vote)
     })
@@ -62,6 +58,15 @@ app.get('/movie', (req, res) => {
   res.status(200).send(movies)
 })
 
-app.listen(8080, () => {
-  console.log('moviedex is listening at http://localhost:8080/movie')
+// 4 params middleware, express knows this is an error handler
+app.use((error, req, res, next) => {
+  let response
+  if (process.env.NODE_ENV === 'production') {
+    response = { error: { message: 'server error' } }
+  } else {
+    response = { error }
+  }
+  res.status(500).json(response)
 })
+
+module.exports = app

@@ -8,6 +8,9 @@
     "start": "nodemon app.js",
     "debug": "debug app.js"
   },
+  "engines": {
+    "node": "12.4.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

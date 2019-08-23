@@ -1,6 +1,7 @@
 // require(import) modules
 require('dotenv').config() // reads the .env file for API_TOKEN
 const express = require('express')
+const morgan = require('morgan')
 const helmet = require('helmet')
 const cors = require('cors')
 
@@ -8,13 +9,13 @@ const cors = require('cors')
 const moviesJson = require('./movies')
 
 // check if we are in production if true return tiny(less info) else 'common' more info
-const morgan = process.env.NODE_ENV === 'production' ? 'tiny' : 'common'
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common'
 
 // create express server
 const app = express()
 
 // include middleware
-app.use(morgan('dev'))
+app.use(morgan(morganSetting))
 app.use(helmet())
 app.use(cors())
 app.use(function validateBearerToken(req, res, next) {

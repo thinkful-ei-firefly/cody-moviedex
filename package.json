@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "debug": "debug app.js",
-    "dev": "nodemon app.js"
+    "start": "node server.js",
+    "debug": "debug server.js",
+    "dev": "nodemon server.js"
   },
   "engines": {
     "node": "12.4.0"
